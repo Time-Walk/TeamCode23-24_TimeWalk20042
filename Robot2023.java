@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -23,12 +24,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 //import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 
 public class Robot2023 extends Robot {
+    OpenCvCamera camera;
     DcMotor RF, LF, RB, LB, LT, NE;
-    //Servo KL, KL1;
+    Servo KL;//, KL1;
+    Servo SM;
     BNO055IMU imu; //Акселерометр
 
     //VuforiaLocalizerImpl vuforia;
@@ -48,20 +53,23 @@ public class Robot2023 extends Robot {
 
         LT = hwmp.get(DcMotor.class, "LT");
 
-        NE = hwmp.get(DcMotor.class, "NE");
+        //NE = hwmp.get(DcMotor.class, "NE");
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Режим остоновки: торможение
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LT.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        /*KL = hwmp.get(Servo.class, "KL");
-        KL1 = hwmp.get(Servo.class, "KL1");*/
+        KL = hwmp.get(Servo.class, "KL");
+        //KL1 = hwmp.get(Servo.class, "KL1");
+
+        SM = hwmp.get(Servo.class, "SM");
 
         vs = hwmp.voltageSensor.iterator().next();
 
         //initVuforia();
 
+        initCamera();
 
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); //Акселерометра
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
@@ -90,6 +98,12 @@ public class Robot2023 extends Robot {
         this.hwmp = hwmp;
 
 
+    }
+
+    public void initCamera() {
+        int cameraMonitorViewId = hwmp.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwmp.appContext.getPackageName());
+        WebcamName webcamName = hwmp.get(WebcamName.class, "Webcam");
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
     }
 
     /*public void initVuforia() {
@@ -929,6 +943,7 @@ public class Robot2023 extends Robot {
 
 
     void g(double cc) {
+        telemetry = FtcDashboard.getInstance().getTelemetry();
         LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         double ErLast = 0;
@@ -938,15 +953,19 @@ public class Robot2023 extends Robot {
 
             double Er = cc - LF.getCurrentPosition();
 
-            double kp = 0.0005;
+            //kp = 0.27
+            //ki = 90
+            //kd = 0.0005625
+
+            double kp = 0.27;
             //telemetry.addData("KP", kp);
             double P = kp * Er ;
 
-            double ki = 0.000002;
+            double ki = 0.8;
             Ir += Er;
             double I = Ir * ki;
 
-            double kd = 0.00008;
+            double kd = 0003375;
             double ErD = ErLast - Er;
             double D = kd * ErD;
 
@@ -963,7 +982,11 @@ public class Robot2023 extends Robot {
             //telemetry.addData("RP", RP);
             //telemetry.update();
 
-            double pwf = P + I;
+            double pwf = P + I + D;
+
+            telemetry.addData("LF", LF.getCurrentPosition());
+            telemetry.addData("pwf", pwf);
+            telemetry.update();
 
             LF.setPower(pwf);
             RB.setPower(-pwf);
@@ -972,6 +995,7 @@ public class Robot2023 extends Robot {
     }
 
     void rotate (double degrees) { //Функция автонома: поворот
+        telemetry = FtcDashboard.getInstance().getTelemetry();
         double pw = 1;
         double Er0 = -degrees;
         double errorFix = 0;
@@ -1009,14 +1033,14 @@ public class Robot2023 extends Robot {
 
             double Er = degrees - (getAngle());
 
-            double kp = 0.1;
+            double kp = 0.0012;
             double P = kp * Er / Er0 * pw;
 
             Ir += -Er;
-            double ki = 0.0002;
+            double ki = 1.2;
             double I = Ir * ki;
 
-            double kd = 0.1;
+            double kd = 0.00003;
             double ErD = Er - ErLast;
             double D = kd * ErD * (1 / Er);
 
@@ -1030,7 +1054,7 @@ public class Robot2023 extends Robot {
             ErLast = Er;
 
 
-            double pwf = P + I; //Регулятор
+            double pwf = P + I + D; //Регулятор
 
 
             LB.setPower(pwf);
@@ -1050,7 +1074,96 @@ public class Robot2023 extends Robot {
                 telemetry.addData("pwf", pwf);
                 telemetry.update();*/
 
+            telemetry.addData("Angle", getAngle());
+            telemetry.addData("pwf", pwf);
+            telemetry.update();
+
         }
     }
+
+    double SMCLOSE = 0.6;
+    double SMOPEN = 1;
+    double KLCLOSE = 0.12;
+    double KLOPEN = 0.28;
+    boolean isDLeft = false;
+    boolean isDRight = false;
+    void servoController() {
+        if (gamepad2.dpad_up ) {
+            SM.setPosition(SMCLOSE);
+        }
+        if (gamepad2.left_bumper) {
+            KL.setPosition(KLCLOSE);
+        }
+        if (gamepad2.right_bumper) {
+            KL.setPosition(KLOPEN);
+        }
+        if ( gamepad2.dpad_left ) {
+            if ( ! isDLeft ) {
+                KLCLOSE += 0.01;
+                isDLeft = true;
+                KL.setPosition(KLCLOSE);
+            }
+        }
+        else {
+            isDLeft = false;
+        }
+        if ( gamepad2.dpad_right ) {
+            if ( !isDRight ) {
+                KLCLOSE -= 0.01;
+                isDRight = true;
+                KL.setPosition(KLCLOSE);
+            }
+        }
+        else {
+            isDRight = false;
+        }
+    }
+
+    double HOLDPOWER = 0.05;
+    Thread liftControllerT = new Thread() { //Поток для лифта
+        @Override
+        public void run() {
+            boolean hold = false;
+            double Power = 0;
+            while (L.opModeIsActive() && !L.isStopRequested()) {
+                //telemetry.addData("y", gamepad2.left_stick_y);
+                //telemetry.update();
+                LT.setPower((gamepad2.right_stick_y/-2.6769)+Power); //Управление лифтом стиком
+                if (gamepad2.a) {
+                    if ( hold ) {
+                        Power = 0;
+                        hold = false;
+                        delay(300);
+                    }
+                    else {
+                        Power = HOLDPOWER;
+                        hold = true;
+                        delay(300);
+                    }
+                }
+                /*if (gamepad2.x) {
+                    //NeState = "Plink";
+                    //plinkCount = 1;
+                    //setLift(240);
+                    Power = HOLDPOWER;
+                    hold = true;
+                }
+                if (gamepad2.b) {
+                    //NeState = "Plink";
+                    //plinkCount = 2;
+                    //setLift(390);
+                    Power = HOLDPOWER;
+                    hold = true;
+                }
+                if (gamepad2.y) {
+                    //NeState = "Plink";
+                    //plinkCount = 3;
+                    //setLift(545);
+                    Power = HOLDPOWER;
+                    hold = true;
+                }*/
+            }
+        }
+    };
 
 }

@@ -26,24 +26,45 @@ public class CiglerNikolsMethod extends LinearOpMode {
         R.LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         R.LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        double kp = 0;
+        double kp = 0.001;
+
+        boolean dup = false;
+        boolean ddown = false;
 
         while (true) {
 
-                if (R.gamepad1.dpad_up  ) { kp += 0.00001; }
-                if (R.gamepad1.dpad_down) { kp -= 0.00001; }
-
-                    double Er = -R.LF.getCurrentPosition();
+                if (gamepad1.dpad_up  ) {
+                    if ( ! dup ) {
+                        kp += 0.001;
+                        dup = true;
+                    }
+                }
+                else {
+                    dup = false;
+                }
+                if (gamepad1.dpad_down) {
+                    if ( ! ddown ) {
+                        kp -= 0.001;
+                        ddown = true;
+                    }
+                }
+                else {
+                    ddown = false;
+                }
+                    double Er = -R.getAngle();
 
                     double P = kp * Er ;
 
                     double pwf = P;
 
-                    R.LF.setPower(pwf);
-                    R.RB.setPower(-pwf);
+                    //R.LF.setPower(pwf);
+                    //R.RB.setPower(-pwf);
 
-                    //R.setMtPower(pwf, pwf, pwf, pwf);
+                    R.setMtPower(pwf, pwf, pwf, pwf);
 
+                    telemetry.addData("Er", Er);
+                    telemetry.addData("P", P);
+                    telemetry.addData("pwf", pwf);
                     telemetry.addData("kp", kp);
                     telemetry.addData("Pos", R.LF.getCurrentPosition());
                     telemetry.update();
@@ -53,4 +74,12 @@ public class CiglerNikolsMethod extends LinearOpMode {
         }
 
     }
+
+//kp = 0.27
+//ki = 54
+//kd = 0.0003375
+
+//kp = 0.0012
+//ki = 1.2
+//kd = 0.00003
 

@@ -24,16 +24,20 @@ public class teleOpo extends LinearOpMode {
         //R.initNeonController.start();
         waitForStart();
         //R.NeState = "Driving";
-        //R.liftControllerT.start();  //Запуск работы лифта
+        R.liftControllerT.start();  //Запуск работы лифта
+        R.SM.setPosition(R.SMOPEN);
         while (!isStopRequested()){
             R.wheelbase();   //Передвижение колесной базы
             //R.servoController();    //Контроль серво на клешне
             //R.servoControllerPro();
+            R.servoController();
             R.driverHelper();
             //R.NeonController();
             //telemetry.addData("Close Pos (0.15 - default)", R.CLOSEPOS);
             //telemetry.addData("Default Pos (0.055 - default)", R.DEFPOS);
             //telemetry.update();
+            telemetry.addData("KLCLOSE", R.KLCLOSE);
+            telemetry.update();
         }
         //R.LT.setPower(0);
 
