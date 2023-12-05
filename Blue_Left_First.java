@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@Autonomous(name="СН.ПР.Первое Простое", group="blur")
+@Autonomous(name="СН.ПР.Первое Простое", group="blue")
 public class Blue_Left_First extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
