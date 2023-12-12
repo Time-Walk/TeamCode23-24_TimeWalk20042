@@ -15,6 +15,7 @@ public abstract class Robot {
     Gamepad gamepad2;
     LinearOpMode L;
     HardwareMap hwmp;
+    // Объявление переменных
 
     void gamepad_init(Gamepad gamepad1, Gamepad gamepad2) { //Инициализация геймпадов
         this.gamepad1 = gamepad1;
@@ -24,7 +25,7 @@ public abstract class Robot {
     abstract void init(); //Инициализация
     abstract void initFields(Telemetry telemetry, LinearOpMode L, HardwareMap hwmp); //Инициализация
 
-    public void delay(long millis) { //Вспомогательная функция как sleep, только прекраснее, чудеснее, чудеснее, прекраснее
+    public void delay(long millis) { //Вспомогательная функция как sleep, при остановки ОП мода, робот полностью отключится
         try {
             Thread.sleep(millis);
         } catch (InterruptedException ex) {

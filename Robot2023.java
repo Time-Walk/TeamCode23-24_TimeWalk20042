@@ -30,18 +30,18 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 //import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 
 public class Robot2023 extends Robot {
-    OpenCvCamera camera;
-    DcMotor RF, LF, RB, LB, LT, NE;
-    Servo KL;//, KL1;
-    Servo SM;
+    OpenCvCamera camera; // инициализация переменной камеры
+    DcMotor RF, LF, RB, LB, LT, NE; // инициализация моторов постоянного тока
+    // Servo KL;//, KL1;
+    Servo SM; // инициализация переменной для запуска самолётика
     BNO055IMU imu; //Акселерометр
 
     //VuforiaLocalizerImpl vuforia;
 
-    Orientation angles;
-    Acceleration gravity;
+    Orientation angles; // переменная в которой будет храниться угол поворота под акселерометр
+    Acceleration gravity; // здесь храниться важная информация для акселерометра
 
-    VoltageSensor vs;
+    VoltageSensor vs; // инициализация переменной датчика напряжения
 
     @Override
     void init() { //Инициализация:
@@ -50,8 +50,10 @@ public class Robot2023 extends Robot {
         LB = hwmp.get(DcMotor.class, "LB");
         RB = hwmp.get(DcMotor.class, "RB");
         RF = hwmp.get(DcMotor.class, "RF");
+        //  присваивание экземпляра к конфигу, колёсная база
 
         LT = hwmp.get(DcMotor.class, "LT");
+        // лифт
 
         //NE = hwmp.get(DcMotor.class, "NE");
 
@@ -60,18 +62,19 @@ public class Robot2023 extends Robot {
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         LT.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        KL = hwmp.get(Servo.class, "KL");
+        // KL = hwmp.get(Servo.class, "KL");
         //KL1 = hwmp.get(Servo.class, "KL1");
 
-        SM = hwmp.get(Servo.class, "SM");
+        SM = hwmp.get(Servo.class, "SM"); // инициализация серво мотора на механизме запуска самолётика
 
-        vs = hwmp.voltageSensor.iterator().next();
+
+        vs = hwmp.voltageSensor.iterator().next(); // присваивание экземпляра датчика
 
         //initVuforia();
 
-        initCamera();
+        initCamera(); // вызов функции инициализации камеры
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); //Акселерометра
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); // инициализация Акселерометра
         parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json";
@@ -100,10 +103,12 @@ public class Robot2023 extends Robot {
 
     }
 
-    public void initCamera() {
+    public void initCamera() { // инициализация камеры
         int cameraMonitorViewId = hwmp.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hwmp.appContext.getPackageName());
-        WebcamName webcamName = hwmp.get(WebcamName.class, "Webcam");
-        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+        // получение Id монитора камеры
+        WebcamName webcamName = hwmp.get(WebcamName.class, "Webcam"); // получение имени камеры из конфига
+        camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId); // получение экземпляра камеры
+
     }
 
     /*public void initVuforia() {
@@ -724,12 +729,12 @@ public class Robot2023 extends Robot {
         delay(50);
     }*/
 
-    void wheelbase() {
-        double rf = gamepad1.left_stick_y + gamepad1.left_stick_x + (gamepad1.right_stick_x * 0.6) - (gamepad1.left_trigger * 0.6) + (gamepad1.right_trigger * 0.6);
+    void wheelbase() { // метод про колёсную базу
+        double rf = gamepad1.left_stick_y + gamepad1.left_stick_x + (gamepad1.right_stick_x * 0.6) - (gamepad1.left_trigger * 0.6) + (gamepad1.right_trigger * 0.6); // получение для 4 колёс необходимой мощности
         double rb = gamepad1.left_stick_y - gamepad1.left_stick_x + (gamepad1.right_stick_x * 0.6) - (gamepad1.left_trigger * 0.6) + (gamepad1.right_trigger * 0.6);
         double lf = -gamepad1.left_stick_y + gamepad1.left_stick_x + (gamepad1.right_stick_x * 0.6) - (gamepad1.left_trigger * 0.6) + (gamepad1.right_trigger * 0.6);
         double lb = -gamepad1.left_stick_y - gamepad1.left_stick_x + (gamepad1.right_stick_x * 0.6) - (gamepad1.left_trigger * 0.6) + (gamepad1.right_trigger * 0.6);
-        RF.setPower(rf);
+        RF.setPower(rf); // задаём мощности
         RB.setPower(rb);
         LF.setPower(lf);
         LB.setPower(lb);
@@ -801,8 +806,8 @@ public class Robot2023 extends Robot {
     };*/
 
 
-    void setMtPower(double lf, double lb, double rf, double rb) {
-        LF.setPower(lf);
+    void setMtPower(double lf, double lb, double rf, double rb) { // метод про получение мощности
+        LF.setPower(lf); // присваивание мощности
         LB.setPower(lb);
         RF.setPower(rf);
         RB.setPower(rb);
@@ -810,7 +815,7 @@ public class Robot2023 extends Robot {
 
     void setMtZero() {
         setMtPower(0, 0, 0, 0);
-    }
+    } // остановка мотора
 
     /*int MgI = 0;
     int GrI = 0;
@@ -942,10 +947,10 @@ public class Robot2023 extends Robot {
     }*/
 
 
-    void g(double cc) {
-        telemetry = FtcDashboard.getInstance().getTelemetry();
-        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    void g(double cc) { // функция езды вперёд на автономе
+        telemetry = FtcDashboard.getInstance().getTelemetry(); // присваивание сути телеметрии из FTC Dashboard
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // обновление енкодер мотора
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER); // бег с использованием енкодера
         double ErLast = 0;
         double Ir = 0;
         double startRotation = getAngle();
@@ -995,7 +1000,7 @@ public class Robot2023 extends Robot {
     }
 
     void rotate (double degrees) { //Функция автонома: поворот
-        telemetry = FtcDashboard.getInstance().getTelemetry();
+        telemetry = FtcDashboard.getInstance().getTelemetry(); // присваивание сути телеметрии из FTC Dashboard
         double pw = 1;
         double Er0 = -degrees;
         double errorFix = 0;
@@ -1057,7 +1062,7 @@ public class Robot2023 extends Robot {
             double pwf = P + I + D; //Регулятор
 
 
-            LB.setPower(pwf);
+            LB.setPower(pwf); // задание мощности
             LF.setPower(pwf);
             RB.setPower(pwf);
             RF.setPower(pwf);
@@ -1074,30 +1079,30 @@ public class Robot2023 extends Robot {
                 telemetry.addData("pwf", pwf);
                 telemetry.update();*/
 
-            telemetry.addData("Angle", getAngle());
+            telemetry.addData("Angle", getAngle()); // добавление данных в телеметрию
             telemetry.addData("pwf", pwf);
-            telemetry.update();
+            telemetry.update(); // обновление телеметрии
 
         }
     }
 
-    double SMCLOSE = 0.6;
+    double SMCLOSE = 0.6; // константы
     double SMOPEN = 1;
     double KLCLOSE = 0.12;
     double KLOPEN = 0.28;
     boolean isDLeft = false;
     boolean isDRight = false;
-    void servoController() {
+    void servoController() { // управление сервами в телеопе
         if (gamepad2.dpad_up ) {
             SM.setPosition(SMCLOSE);
         }
-        if (gamepad2.left_bumper) {
-            KL.setPosition(KLCLOSE);
-        }
-        if (gamepad2.right_bumper) {
-            KL.setPosition(KLOPEN);
-        }
-        if ( gamepad2.dpad_left ) {
+        // if (gamepad2.left_bumper) {
+          //  KL.setPosition(KLCLOSE);
+       // }
+       // if (gamepad2.right_bumper) {
+           // KL.setPosition(KLOPEN);
+        //}
+        /* if ( gamepad2.dpad_left ) {
             if ( ! isDLeft ) {
                 KLCLOSE += 0.01;
                 isDLeft = true;
@@ -1106,8 +1111,9 @@ public class Robot2023 extends Robot {
         }
         else {
             isDLeft = false;
-        }
-        if ( gamepad2.dpad_right ) {
+        } */
+
+       /* if ( gamepad2.dpad_right ) {
             if ( !isDRight ) {
                 KLCLOSE -= 0.01;
                 isDRight = true;
@@ -1116,29 +1122,29 @@ public class Robot2023 extends Robot {
         }
         else {
             isDRight = false;
-        }
+        } */
     }
 
     double HOLDPOWER = 0.05;
     Thread liftControllerT = new Thread() { //Поток для лифта
         @Override
-        public void run() {
+        public void run() { // основная функция потока
             boolean hold = false;
             double Power = 0;
             while (L.opModeIsActive() && !L.isStopRequested()) {
                 //telemetry.addData("y", gamepad2.left_stick_y);
                 //telemetry.update();
                 LT.setPower((gamepad2.right_stick_y/-2.6769)+Power); //Управление лифтом стиком
-                if (gamepad2.a) {
-                    if ( hold ) {
-                        Power = 0;
-                        hold = false;
-                        delay(300);
+                if (gamepad2.a) { // если нажата кнопка а
+                    if ( hold ) { // условие держания лифта ?
+                        Power = 0; // отключение силы лифта
+                        hold = false; // опускаем флаг hold
+                        delay(300); // задержка
                     }
                     else {
-                        Power = HOLDPOWER;
-                        hold = true;
-                        delay(300);
+                        Power = HOLDPOWER; // значение силы, которая удержит лифт
+                        hold = true; // поднимаем флаг hold
+                        delay(300); // задержка
                     }
                 }
                 /*if (gamepad2.x) {
