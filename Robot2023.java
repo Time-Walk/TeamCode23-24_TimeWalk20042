@@ -962,15 +962,15 @@ public class Robot2023 extends Robot {
             //ki = 90
             //kd = 0.0005625
 
-            double kp = 0.27;
+            double kp = 0.3515;
             //telemetry.addData("KP", kp);
             double P = kp * Er ;
 
-            double ki = 0.8;
+            double ki = 0.0000537;
             Ir += Er;
             double I = Ir * ki;
 
-            double kd = 0003375;
+            double kd = 0;
             double ErD = ErLast - Er;
             double D = kd * ErD;
 
