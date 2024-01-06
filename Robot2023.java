@@ -31,7 +31,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 public class Robot2023 extends Robot {
     OpenCvCamera camera; // инициализация переменной камеры
-    DcMotor RF, LF, RB, LB, LT, NE; // инициализация моторов постоянного тока
+    DcMotor RF, LF, RB, LB, LT, NE, LZ, RZ; // инициализация моторов постоянного тока
     // Servo KL;//, KL1;
     Servo SM; // инициализация переменной для запуска самолётика
     BNO055IMU imu; //Акселерометр
@@ -52,15 +52,18 @@ public class Robot2023 extends Robot {
         RF = hwmp.get(DcMotor.class, "RF");
         //  присваивание экземпляра к конфигу, колёсная база
 
-        LT = hwmp.get(DcMotor.class, "LT");
+        //LT = hwmp.get(DcMotor.class, "LT");
         // лифт
+
+        LZ = hwmp.get(DcMotor.class, "LZ");
+        RZ = hwmp.get(DcMotor.class, "RZ");
 
         //NE = hwmp.get(DcMotor.class, "NE");
 
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Режим остоновки: торможение
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        LT.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //LT.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // KL = hwmp.get(Servo.class, "KL");
         //KL1 = hwmp.get(Servo.class, "KL1");
@@ -1171,5 +1174,10 @@ public class Robot2023 extends Robot {
             }
         }
     };
+
+    void GrabController() {
+        LZ.setPower(gamepad2.right_trigger-gamepad2.left_trigger);
+        RZ.setPower(gamepad2.left_trigger-gamepad2.right_trigger);
+    }
 
 }

@@ -24,13 +24,14 @@ public class teleOpo extends LinearOpMode {
         //R.initNeonController.start();
         waitForStart(); // мтеод ожидания старта
         //R.NeState = "Driving";
-        R.liftControllerT.start();  //Запуск работы лифта
+        //R.liftControllerT.start();  //Запуск работы лифта
         R.SM.setPosition(R.SMOPEN); // инициализация серво позиции серво мотора
         while (!isStopRequested()){ // пока нет запросов на остановку
             R.wheelbase();   //Передвижение колесной базы
             //R.servoController();    //Контроль серво на клешне
             //R.servoControllerPro();
-            R.servoController(); // вызов управления сервами в телеопе
+            //R.servoController(); // вызов управления сервами в телеопе
+            R.GrabController();
             R.driverHelper(); // вызов хэлпера, где ничего не написано :(
             //R.NeonController();
             //telemetry.addData("Close Pos (0.15 - default)", R.CLOSEPOS);
