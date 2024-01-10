@@ -39,7 +39,7 @@ public class Robot2023 extends Robot {
     //VuforiaLocalizerImpl vuforia;
 
     Orientation angles; // переменная в которой будет храниться угол поворота под акселерометр
-    Acceleration gravity; // здесь храниться важная информация для акселерометра
+    Acceleration gravity; // здесь хранится важная информация для акселерометра
 
     VoltageSensor vs; // инициализация переменной датчика напряжения
 
@@ -1052,7 +1052,7 @@ public class Robot2023 extends Robot {
             double ErD = Er - ErLast;
             double D = kd * ErD * (1 / Er);
 
-            if (Math.signum(D) > Math.signum(P)) {
+            if (Math.abs(D) > Math.abs(P)) {
                 D = P;
             }
 

@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Autonomous(name="Динозаврики аааа", group="")
 @Config
 public class PIDConfRotateDash extends LinearOpMode {
-    public static double kp = 0.8;
-    public static double ki = 0.00034;
-    public static double kd = 0.8;
+    public static double kp = 0.7;
+    public static double ki = 0.000085;
+    public static double kd = 0.6;
     @Override
     public void runOpMode() throws InterruptedException {
         Robot2023 R = new Robot2023();
@@ -47,7 +47,7 @@ public class PIDConfRotateDash extends LinearOpMode {
                     pw *= -1;
                     errorFix = 2;
                 }
-                while (Math.abs(degrees - R.getAngle()) > 0.5 && opModeIsActive() && !(gamepad1.right_stick_button)) {
+                while (Math.abs(degrees - R.getAngle()) > 1 && opModeIsActive() && !(gamepad1.right_stick_button)) {
                     if (R.getAngle() > 0 && errorFix == 1) {
                         Er0 = Er0 * -1;
                         degrees += 360;
@@ -74,7 +74,7 @@ public class PIDConfRotateDash extends LinearOpMode {
                     double ErD = Er - ErLast;
                     double D = kd * ErD * (1 / Er);
 
-                    if (Math.signum(D) > Math.signum(P)) {
+                    if (Math.abs(D) > Math.abs(P)) {
                         D = P;
                     }
 
