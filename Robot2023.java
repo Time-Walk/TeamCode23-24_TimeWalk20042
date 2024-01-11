@@ -957,7 +957,7 @@ public class Robot2023 extends Robot {
         double ErLast = 0;
         double Ir = 0;
         double startRotation = getAngle();
-        while ( Math.abs(cc - LF.getCurrentPosition()) > 5 && L.opModeIsActive()) {
+        while ( Math.abs(cc - LF.getCurrentPosition()) > 20 && L.opModeIsActive()) {
 
             double Er = cc - LF.getCurrentPosition();
 
@@ -965,24 +965,24 @@ public class Robot2023 extends Robot {
             //ki = 90
             //kd = 0.0005625
 
-            double kp = 0.3515;
+            double kp = 0.0006;
             //telemetry.addData("KP", kp);
             double P = kp * Er ;
 
-            double ki = 0.0000537;
+            double ki = 0.0000008;
             Ir += Er;
             double I = Ir * ki;
 
-            double kd = 0;
+            double kd = 0.003;
             double ErD = ErLast - Er;
             double D = kd * ErD;
 
             if ( Math.abs(D) > Math.abs(P) ) { D=P; }
 
-            //double REr = startRotation - getAngle();
+            double REr = startRotation - getAngle();
 
-            //double Rkp = 0.04;
-            //double RP = Rkp * REr;
+            double Rkp = 0.1;
+            double RP = Rkp * REr;
 
             //double RLF = -RP;
             //double RRB = -RP;
@@ -996,8 +996,8 @@ public class Robot2023 extends Robot {
             telemetry.addData("pwf", pwf);
             telemetry.update();
 
-            LF.setPower(pwf);
-            RB.setPower(-pwf);
+            LF.setPower(pwf-RP);
+            RB.setPower(-pwf-RP);
         }
         setMtZero();
     }

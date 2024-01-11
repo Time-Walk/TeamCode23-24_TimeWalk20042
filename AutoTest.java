@@ -15,6 +15,18 @@ public class AutoTest extends LinearOpMode {
 
         //okay, let's go!
 
+        R.g(2500);
+        R.delay(500);
+        R.g(-2500);
+        R.delay(500);
+        R.g(2500);
+        R.delay(500);
+        R.g(-2500);
+        R.delay(500);;
+        R.g(2500);
+        R.delay(500);
+        R.g(-2500);
+
     }
 
 }
