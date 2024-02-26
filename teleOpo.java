@@ -27,7 +27,8 @@ public class teleOpo extends LinearOpMode {
         //R.liftControllerT.start();  //Запуск работы лифта
         R.SM.setPosition(R.SMOPEN); // инициализация серво позиции серво мотора
         while (!isStopRequested()){ // пока нет запросов на остановку
-            R.wheelbase();   //Передвижение колесной базы
+            //R.wheelbase();   //Передвижение колесной базы
+            R.SetPowerNEW();
             //R.servoController();    //Контроль серво на клешне
             //R.servoControllerPro();
             //R.servoController(); // вызов управления сервами в телеопе
@@ -37,6 +38,12 @@ public class teleOpo extends LinearOpMode {
             //telemetry.addData("Close Pos (0.15 - default)", R.CLOSEPOS);
             //telemetry.addData("Default Pos (0.055 - default)", R.DEFPOS);
             //telemetry.update();
+            telemetry.addData("Мощность переднего левого мотора", R.LF);
+            telemetry.addData("Мощность заднего левого мотора", R.LB);
+            telemetry.addData("Мощность переднего правого мотора", R.RF);
+            telemetry.addData("Мощность заднего правого мотора", R.RB);
+            telemetry.addData("Положение первого левого стика по х", R.gamepad1.left_stick_x);
+            telemetry.addData("Положение первого левого стика по y", R.gamepad1.left_stick_y);
             telemetry.addData("KLCLOSE", R.KLCLOSE); // добавления информации в телеметрию
             telemetry.update(); // обновлние телеметрии
         }

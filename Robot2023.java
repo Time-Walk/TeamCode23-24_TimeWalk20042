@@ -26,6 +26,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
+
+import java.io.Console;
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 //import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 
@@ -1180,4 +1182,36 @@ public class Robot2023 extends Robot {
         RZ.setPower(gamepad2.left_trigger-gamepad2.right_trigger);
     }
 
+    void SetPowerNEW() {
+        double PowerLF = gamepad1.left_stick_x + gamepad1.left_stick_y + gamepad1.left_trigger;
+        double PowerLB = gamepad1.left_stick_x - gamepad1.left_stick_y + gamepad1.left_trigger;
+        double PowerRF = -gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.left_trigger;
+        double PowerRB = -gamepad1.left_stick_y - gamepad1.left_stick_x + gamepad1.left_trigger;
+
+        LF.setPower(PowerLF);
+        LB.setPower(PowerLB);
+        RF.setPower(PowerRF);
+        RB.setPower(PowerRB);
+    }
+
+    void regulator_x(float speed) {
+        telemetry = FtcDashboard.getInstance().getTelemetry();
+        double startRotation = getAngle();
+        double start_pos = LB.getCurrentPosition() + LF.getCurrentPosition() + RF.getCurrentPosition() + RB.getCurrentPosition();
+        double err = 0;
+
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        while(true)
+        {
+            break;
+        }
+
+        setMtZero();
+    }
+
 }
+
+
+
