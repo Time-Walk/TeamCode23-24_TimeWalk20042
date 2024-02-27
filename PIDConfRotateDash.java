@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 @Autonomous(name="Динозаврики аааа", group="")
 @Config
 public class PIDConfRotateDash extends LinearOpMode {
-    public static double kp = 0.7;
-    public static double ki = 0.000085;
-    public static double kd = 0.6;
+    public static double kp = .5;
+    public static double ki = .00015;
+    public static double kd = .269;
     @Override
     public void runOpMode() throws InterruptedException {
         Robot2023 R = new Robot2023();
@@ -47,7 +47,7 @@ public class PIDConfRotateDash extends LinearOpMode {
                     pw *= -1;
                     errorFix = 2;
                 }
-                while (Math.abs(degrees - R.getAngle()) > 1 && opModeIsActive() && !(gamepad1.right_stick_button)) {
+                while ((Math.abs(degrees - R.getAngle()) > .8 || (Math.abs(degrees - R.getAngle()) - ErLast) > 1.2) && opModeIsActive() && !(gamepad1.right_stick_button)) {
                     if (R.getAngle() > 0 && errorFix == 1) {
                         Er0 = Er0 * -1;
                         degrees += 360;
@@ -66,9 +66,9 @@ public class PIDConfRotateDash extends LinearOpMode {
                     //double kp = 0.0012;
                     double P = kp * Er / Er0 * pw;
 
-                    Ir += -Er;
+                    Ir += -Er * ki;
                     //double ki = 1.2;
-                    double I = Ir * ki;
+                    double I = Ir;
 
                     //double kd = 0.00003;
                     double ErD = Er - ErLast;
@@ -89,7 +89,7 @@ public class PIDConfRotateDash extends LinearOpMode {
 
                     R.setMtPower(pwf, pwf, pwf, pwf);
 
-                    /*telemetry.addData("pos", R.getAngle());
+                    telemetry.addData("pos", R.getAngle());
                     telemetry.addData("pwf", pwf);
                     telemetry.addData("kp", kp);
                     telemetry.addData("P", P);
@@ -97,7 +97,8 @@ public class PIDConfRotateDash extends LinearOpMode {
                     telemetry.addData("D", D);
                     telemetry.addData("ki", ki);
                     telemetry.addData("I", I);
-                    telemetry.update();*/
+                    telemetry.addData("dEr", ErD);
+                    telemetry.update();
                 }
                 R.setMtZero();
             }
