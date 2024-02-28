@@ -27,8 +27,8 @@ public class teleOpo extends LinearOpMode {
         //R.liftControllerT.start();  //Запуск работы лифта
         R.SM.setPosition(R.SMOPEN); // инициализация серво позиции серво мотора
         while (!isStopRequested()){ // пока нет запросов на остановку
-            //R.wheelbase();   //Передвижение колесной базы
-            R.SetPowerNEW();
+            R.wheelbase();   //Передвижение колесной базы
+            //R.SetPowerNEW();
             //R.servoController();    //Контроль серво на клешне
             //R.servoControllerPro();
             //R.servoController(); // вызов управления сервами в телеопе

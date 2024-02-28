@@ -65,6 +65,7 @@ public class Robot2023 extends Robot {
         LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE); //Режим остоновки: торможение
         RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //LT.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // KL = hwmp.get(Servo.class, "KL");
