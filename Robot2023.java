@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -31,6 +32,7 @@ import java.io.Console;
 //import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 //import org.firstinspires.ftc.robotcore.internal.vuforia.VuforiaLocalizerImpl;
 
+@Config
 public class Robot2023 extends Robot {
     OpenCvCamera camera; // инициализация переменной камеры
     DcMotor RF, LF, RB, LB, LT, NE, LZ, RZ; // инициализация моторов постоянного тока
@@ -1210,6 +1212,92 @@ public class Robot2023 extends Robot {
         }
 
         setMtZero();
+    }
+
+    public static double XYkp = 0.00765;
+    public static double XYkd = 0.003;
+    public static double XYkpr = 0.08;
+    public static double XYkrelea = 0.15;
+    public static double XYkpa = 0.00069;
+
+    void XYaction(double Xdist, double Ydist) {
+        telemetry = FtcDashboard.getInstance().getTelemetry();
+
+        LF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        LF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        RF.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        RF.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        double XErLast = 0, YErLast = 0;
+        double startRotation = getAngle();
+
+        while ( ( (Math.abs(Xdist - LF.getCurrentPosition()) > 5) || (Math.abs((Xdist - LF.getCurrentPosition()) - XErLast) > 2) ||
+                  (Math.abs(Ydist - RF.getCurrentPosition()) > 5) || (Math.abs((Ydist - RF.getCurrentPosition()) - YErLast) > 2)) &&
+                  L.opModeIsActive() && !L.isStopRequested() ) {
+
+            double pwx = 0, pwy = 0;
+
+            double XEr = Xdist - LF.getCurrentPosition();
+            double YEr = Ydist - RF.getCurrentPosition();
+
+            if ( XEr > Xdist / 2 ) {
+                double Rele = XYkrelea * Math.signum(XEr);
+                double P = XYkpa * Math.abs(Xdist - XEr);
+
+                pwx = Rele + P;
+
+                telemetry.addData("Rele", Rele);
+                telemetry.addData("P", P);
+            }
+            else {
+                double P = XYkp * XEr;
+                double D = XYkd * ( XErLast - XEr );
+
+                if (Math.abs(D) > Math.abs(P)) {
+                    D = P;
+                }
+
+                pwx = P + D;
+
+            }
+            if ( YEr > Ydist / 2 ) {
+                double Rele = XYkrelea * Math.signum(YEr);
+                double P = XYkpa * Math.abs(Ydist - YEr);
+
+                pwy = Rele + P;
+            }
+            else {
+                double P = XYkp * YEr;
+                double D = XYkd * ( YErLast - YEr );
+
+                if (Math.abs(D) > Math.abs(P)) {
+                    D = P;
+                }
+
+                pwy = P + D;
+
+            }
+
+            double REr = startRotation - getAngle();
+
+            double PR = XYkpr * REr;
+
+            XErLast = XEr;
+            YErLast = YEr;
+
+            setMtPower(pwx-PR, 0, 0, pwx-PR);
+
+            telemetry.addData("REr", REr);
+            telemetry.addData("PR", PR);
+            telemetry.addData("pwx", pwx);
+            telemetry.addData("U", pwx-PR);
+            telemetry.addData("XEr", XEr);
+            telemetry.update();
+
+        }
+
+        setMtZero();
+
     }
 
 }

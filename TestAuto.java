@@ -29,13 +29,15 @@ public class TestAuto extends LinearOpMode {
         R.delay(1000);
         R.g(-1700);*/
 
-        R.rotate(90);
-        R.delay(1000);
-        R.rotate(-90);
-        R.delay(1000);
-        R.rotate(90);
-        R.delay(1000);
-        R.rotate(-90);
+        //R.rotate(90);
+        //R.delay(1000);
+        //R.rotate(-90);
+        //R.delay(1000);
+        //R.rotate(90);
+        //R.delay(1000);
+        //R.rotate(-90);
+
+        R.XYaction(750, 0);
 
     }
 
